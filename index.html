@@ -1,383 +1,287 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eiken Grade 5 Challenge</title>
-    <style>
-        /* デザイン設定：子供向けに大きく、シンプルに */
-        :root {
-            --primary: #4A90E2;
-            --success: #2ECC71;
-            --danger: #E74C3C;
-            --bg: #F0F4F8;
-            --card: #FFFFFF;
-        }
-
-        body {
-            font-family: 'Verdana', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            user-select: none;
-        }
-
-        .container {
-            background: var(--card);
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center;
-            position: relative;
-        }
-
-        h1 { color: var(--primary); margin-bottom: 10px; }
-        h2 { color: #555; font-size: 1.2rem; }
-
-        /* ボタン共通スタイル */
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            margin: 10px;
-            width: 80%;
-            font-weight: bold;
-        }
-        .btn:active { transform: scale(0.95); }
-        .btn-secondary { background: #95a5a6; }
-
-        /* クイズ画面 */
-        #quiz-section { display: none; }
-        .question-box {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-            margin: 30px 0;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .options-grid {
-            display: grid;
-            gap: 15px;
-        }
-        .option-btn {
-            background: white;
-            border: 3px solid var(--primary);
-            color: #333;
-            padding: 15px;
-            font-size: 1.2rem;
-            border-radius: 15px;
-            cursor: pointer;
-        }
-        .option-btn:hover { background: #eef6ff; }
-        
-        /* 正解・不正解のエフェクト */
-        .correct { background: var(--success) !important; color: white !important; border-color: var(--success) !important; }
-        .wrong { background: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
-
-        /* 結果画面 */
-        #result-section { display: none; }
-        .score-display { font-size: 3rem; color: var(--primary); margin: 20px 0; }
-        .stamp-reveal { font-size: 4rem; animation: pop 0.5s; margin: 20px 0; }
-
-        /* スタンプ帳 */
-        #stamp-book-section { display: none; }
-        .stamp-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .stamp-slot {
-            aspect-ratio: 1;
-            background: #eee;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            cursor: pointer;
-            position: relative;
-        }
-        .stamp-slot.locked { filter: grayscale(100%); opacity: 0.3; }
-        
-        /* ポップアップ（日本語訳用） */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            animation: pop 0.3s;
-        }
-        .jp-word { font-size: 2rem; color: var(--primary); font-weight: bold; margin: 10px 0; }
-
-        @keyframes pop {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英検5級 60問チャレンジ完全版</title>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root{ --primary:#1976d2; --success:#4caf50; --wrong:#f44336; --bg:#e3f2fd; }
+body{ font-family:'Kosugi Maru',sans-serif; background:var(--bg); text-align:center; margin:0; padding:10px; }
+#app{ max-width:550px; margin:20px auto; background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); min-height:450px; position: relative; }
+h1{ color:var(--primary); font-size:24px; margin-bottom:10px; }
+.btn{ display:block; width:100%; margin:12px 0; padding:16px; font-size:18px; border-radius:15px; border:3px solid #eee; background:white; cursor:pointer; touch-action:manipulation; user-select:none; transition:all 0.2s; }
+.btn:hover{ background:#fafafa; border-color:#ddd; }
+.btn.selected{ background:#fff176; border-color:#fbc02d; transform: scale(1.02); }
+.btn:active{ transform:scale(0.97); }
+.hidden{ display:none; }
+#mark{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:200px; opacity:0; pointer-events:none; z-index:100; }
+.mark-ani{ animation:pop 0.8s ease-out; }
+@keyframes pop{ 0%{opacity:0;transform:translate(-50%,-50%) scale(0.3);} 30%{opacity:1;} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.3);} }
+.q-text{ font-size:22px; font-weight:bold; margin:20px 0; color:#0d47a1; line-height:1.4; }
+.stamp-grid{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:15px 0; }
+.stamp{ background:#ffecb3; border:2px dashed #ffa000; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:24px; animation: stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes stampIn { from { transform: scale(0); rotate: -20deg; } to { transform: scale(1); rotate: 0deg; } }
+.review-area{ text-align:left; background:#f1f8e9; padding:15px; border-radius:15px; margin-top:20px; border: 1px solid #c8e6c9; }
+.review-item{ padding:10px; border-bottom: 1px solid #c8e6c9; cursor:pointer; }
+.review-item:last-child{ border:none; }
+.review-q{ color:var(--wrong); font-weight:bold; display: block; }
+.review-a{ color:var(--success); font-size:0.9em; display: block; margin-top: 4px; }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <div id="start-section">
-        <h1>ENGLISH CHALLENGE</h1>
-        <p>Grade 5 Level</p>
-        <button class="btn" onclick="startQuiz()">START</button>
-        <br>
-        <button class="btn btn-secondary" onclick="showStampBook()">MY STAMPS</button>
+<div id="app">
+    <div id="view-start">
+        <h1>英検5級 60問テスト</h1>
+        <p style="font-size:14px; color:#555;">ランダムに10問出題！<br>選んでから「もう一度タップ」で決定</p>
+        <button onclick="startQuiz()" class="btn" style="background:var(--success);color:white;border:none;font-weight:bold;font-size:22px;box-shadow:0 4px #2e7d32;">スタート！</button>
+        <div style="margin-top:30px; border-top: 1px solid #eee; padding-top: 20px;">
+            <p style="font-size:13px; font-weight:bold; color:var(--primary);">あつめたスタンプ帳</p>
+            <div id="saved-stamps" class="stamp-grid"></div>
+        </div>
     </div>
 
-    <div id="quiz-section">
-        <h2 id="progress-text">Question 1/10</h2>
-        <div class="question-box" id="question-text">
-            </div>
-        <div class="options-grid" id="options-container">
-            </div>
+    <div id="view-quiz" class="hidden">
+        <div id="q-header" style="font-size:14px;color:#666; font-weight:bold;"></div>
+        <div id="q-body" class="q-text"></div>
+        <div id="options"></div>
     </div>
 
-    <div id="result-section">
-        <h2 id="result-title">RESULT</h2>
-        <div class="score-display" id="score-text"></div>
-        <div id="reward-area"></div>
-        <button class="btn" onclick="toTitle()">BACK TO TITLE</button>
-    </div>
+    <div id="view-result" class="hidden">
+        <h1>結果発表</h1>
+        <h2 id="score-text" style="font-size:40px; margin: 10px 0;"></h2>
 
-    <div id="stamp-book-section">
-        <h2>MY COLLECTION</h2>
-        <p>Tap to see meaning</p>
-        <div class="stamp-grid" id="stamp-grid"></div>
-        <button class="btn" onclick="toTitle()">CLOSE</button>
+        <div id="new-stamps-container">
+            <p style="font-weight:bold; font-size:14px;">新しくゲットしたスタンプ！</p>
+            <div id="new-stamps" class="stamp-grid"></div>
+        </div>
+
+        <div id="review-area" class="review-area hidden">
+            <p style="margin:0 0 10px 0;font-weight:bold; color:#2e7d32;">📝 ふくしゅうリスト (タップで音が出るよ)</p>
+            <div id="review-list"></div>
+        </div>
+
+        <button onclick="location.reload()" class="btn" style="background:var(--primary);color:white;border:none;margin-top:20px;">もう一度チャレンジ</button>
     </div>
 </div>
 
-<div class="modal" id="modal" onclick="closeModal()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div style="font-size:4rem;" id="modal-icon"></div>
-        <div class="jp-word" id="modal-jp"></div>
-        <button class="btn" onclick="closeModal()">OK</button>
-    </div>
-</div>
+<div id="mark"></div>
 
 <script>
-    // --- 1. データセット (英検5級レベル・オリジナル) ---
-    // スタンプIDと連携させるため、vocabの正解ワードをキーにします
-    const questionPool = [
-        // 単語 (Context)
-        { q: "I eat an ( ) every morning.", opts: ["apple", "book", "car", "sky"], ans: 0 },
-        { q: "My father drives a ( ).", opts: ["bus", "cat", "pen", "cup"], ans: 0 },
-        { q: "Do you play ( )?", opts: ["soccer", "desk", "dog", "bag"], ans: 0 },
-        { q: "This is a big ( ).", opts: ["house", "run", "happy", "fast"], ans: 0 },
-        { q: "I go to ( ) by bus.", opts: ["school", "apple", "bed", "red"], ans: 0 },
-        // 会話 (Conversation)
-        { q: "A: Happy Birthday!<br>B: ( ).", opts: ["Thank you.", "I'm sorry.", "Good bye.", "Yes, I am."], ans: 0 },
-        { q: "A: Nice to meet you.<br>B: ( ).", opts: ["Nice to meet you, too.", "You are welcome.", "Good morning.", "I like it."], ans: 0 },
-        { q: "A: How are you?<br>B: ( ).", opts: ["I'm fine.", "It is a pen.", "Yes, I do.", "Good night."], ans: 0 },
-        { q: "A: Here you are.<br>B: ( ).", opts: ["Thank you.", "No, it is not.", "I am happy.", "See you."], ans: 0 },
-        // 文法 (Grammar)
-        { q: "( ) you like music?", opts: ["Do", "Are", "Is", "Does"], ans: 0 },
-        { q: "She ( ) my sister.", opts: ["is", "am", "are", "go"], ans: 0 },
-        { q: "I ( ) tennis on Sundays.", opts: ["play", "plays", "playing", "player"], ans: 0 },
-        { q: "That ( ) a dog.", opts: ["is", "are", "do", "am"], ans: 0 },
-        { q: "What ( ) this?", opts: ["is", "are", "do", "does"], ans: 0 },
-        { q: "Let's ( ) to the park.", opts: ["go", "going", "goes", "to go"], ans: 0 }
-    ];
+const QUESTIONS = [
+    {"question":"How are you?","options":["I'm fine.","Thank you.","Goodbye.","Yes, please."],"answer":0,"stamp":"😊"},
+    {"question":"Nice to meet you.","options":["Nice to meet you, too.","You're welcome.","No, thank you.","I'm sorry."],"answer":0,"stamp":"🤝"},
+    {"question":"I ( ) to school every day.","options":["goes","go","going","gone"],"answer":1,"stamp":"🏫"},
+    {"question":"Can you ( ) the piano?","options":["plays","playing","play","played"],"answer":2,"stamp":"🎹"},
+    {"question":"( ) is that boy? --- He is my brother.","options":["What","Where","Who","How"],"answer":2,"stamp":"👦"},
+    {"question":"This is ( ) notebook.","options":["my","me","I","mine"],"answer":0,"stamp":"📓"},
+    {"question":"I am ( ) music now.","options":["listen","listening","listens","listened"],"answer":1,"stamp":"🎧"},
+    {"question":"I like ( ) very much.","options":["apple","an apple","apples","the apple"],"answer":2,"stamp":"🍎"},
+    {"question":"Let's ( ) tennis.","options":["play","playing","plays","to play"],"answer":0,"stamp":"🎾"},
+    {"question":"Look ( ) the picture.","options":["to","at","in","for"],"answer":1,"stamp":"🖼️"},
+    {"question":"( ) time is it?","options":["How","What","When","Where"],"answer":1,"stamp":"⏰"},
+    {"question":"( ) old are you?","options":["How","What","Who","Where"],"answer":0,"stamp":"🎂"},
+    {"question":"I ( ) breakfast at seven.","options":["have","has","having","to have"],"answer":0,"stamp":"🍞"},
+    {"question":"My father ( ) tennis on Sundays.","options":["play","plays","playing","played"],"answer":1,"stamp":"🎾"},
+    {"question":"( ) you help me?","options":["Do","Can","Are","Is"],"answer":1,"stamp":"🆘"},
+    {"question":"( ) is the station?","options":["Who","Where","When","What"],"answer":1,"stamp":"🚉"},
+    {"question":"( ) do you play soccer? --- In the park.","options":["When","Who","Where","What"],"answer":2,"stamp":"🌳"},
+    {"question":"( ) name is Ken.","options":["He","His","Him","He's"],"answer":1,"stamp":"🆔"},
+    {"question":"Look at ( ).","options":["we","our","us","ours"],"answer":2,"stamp":"👀"},
+    {"question":"They are ( ) in the pool.","options":["swim","swimming","swims","swam"],"answer":1,"stamp":"🏊"},
+    {"question":"I ( ) like baseball.","options":["am not","don't","doesn't","not"],"answer":1,"stamp":"⚾"},
+    {"question":"She ( ) English every day.","options":["study","studies","studying","to study"],"answer":1,"stamp":"✍️"},
+    {"question":"How ( ) is this? --- It's 100 yen.","options":["much","many","old","long"],"answer":0,"stamp":"💰"},
+    {"question":"( ) is your birthday?","options":["What","When","Where","Who"],"answer":1,"stamp":"📅"},
+    {"question":"I ( ) a new car.","options":["want","wants","wanting","to want"],"answer":0,"stamp":"🚗"},
+    {"question":"It is ( ) today.","options":["sun","sunny","suns","sunned"],"answer":1,"stamp":"☀️"},
+    {"question":"What ( ) you doing?","options":["am","is","are","do"],"answer":2,"stamp":"❓"},
+    {"question":"( ) up, Ken. It's seven o'clock.","options":["Get","Go","Take","Sit"],"answer":0,"stamp":"🌞"},
+    {"question":"Open ( ) book, please.","options":["you","your","me","mine"],"answer":1,"stamp":"📖"},
+    {"question":"I ( ) a student.","options":["is","am","are","be"],"answer":1,"stamp":"🎒"},
+    {"question":"This is an ( ).","options":["pen","book","orange","desk"],"answer":2,"stamp":"🍊"},
+    {"question":"Are you ( )? --- Yes, I am.","options":["cook","cooking","cooks","to cook"],"answer":1,"stamp":"🍳"},
+    {"question":"( ) many books do you have?","options":["How","What","When","Where"],"answer":0,"stamp":"📚"},
+    {"question":"I play soccer ( ) Saturday.","options":["in","on","at","to"],"answer":1,"stamp":"⚽"},
+    {"question":"He ( ) a tall boy.","options":["am","is","are","do"],"answer":1,"stamp":"🦒"},
+    {"question":"( ) go to the library.","options":["Let's","Do","Are","Is"],"answer":0,"stamp":"🏛️"},
+    {"question":"Whose bag is ( )?","options":["this","these","those","my"],"answer":0,"stamp":"💼"},
+    {"question":"Good ( ), Mom. --- Good night, Ken.","options":["morning","evening","night","afternoon"],"answer":2,"stamp":"🌙"},
+    {"question":"( ) you busy?","options":["Do","Are","Can","Is"],"answer":1,"stamp":"🏃"},
+    {"question":"I am ( ) from Canada.","options":["no","not","don't","isn't"],"answer":1,"stamp":"🇨🇦"},
+    {"question":"( ) close the door.","options":["Not","No","Don't","Doesn't"],"answer":2,"stamp":"🚪"},
+    {"question":"That ( ) is mine.","options":["pen","pens","pen's","a pen"],"answer":0,"stamp":"✒️"},
+    {"question":"We ( ) lunch at school.","options":["eat","eats","eating","to eat"],"answer":0,"stamp":"🍱"},
+    {"question":"I like ( ) music.","options":["listen","listening to","listen to","listens"],"answer":1,"stamp":"🎵"},
+    {"question":"Wait ( ) me, please.","options":["at","to","for","in"],"answer":2,"stamp":"⌛"},
+    {"question":"How ( ) do you go there? --- Twice a week.","options":["often","much","many","old"],"answer":0,"stamp":"🔄"},
+    {"question":"Excuse ( ).","options":["me","I","my","mine"],"answer":0,"stamp":"💬"},
+    {"question":"Happy ( ) Year!","options":["New","Now","Good","Nice"],"answer":0,"stamp":"🎍"},
+    {"question":"I'm ( ). --- Here is some water.","options":["hungry","thirsty","sleepy","happy"],"answer":1,"stamp":"💧"},
+    {"question":"( ) your name?","options":["What","What's","How's","Who's"],"answer":1,"stamp":"📝"},
+    {"question":"( ) your hands.","options":["Wash","Watch","Walk","Wait"],"answer":0,"stamp":"🧼"},
+    {"question":"This is for ( ).","options":["you","your","yours","you're"],"answer":0,"stamp":"🎁"},
+    {"question":"( ) me a favor?","options":["Do","Make","Give","Take"],"answer":0,"stamp":"🙏"},
+    {"question":"I ( ) the piano every day.","options":["play","plays","playing","played"],"answer":0,"stamp":"🎹"},
+    {"question":"Do you like ( )?","options":["apple","apples","an apple","the apple"],"answer":1,"stamp":"🍏"},
+    {"question":"( ) you like coffee?","options":["Do","Are","Is","Can"],"answer":0,"stamp":"☕"},
+    {"question":"See you ( ).","options":["again","ready","well","nice"],"answer":0,"stamp":"👋"},
+    {"question":"I have ( ) breakfast.","options":["a","an","the","(no word)"],"answer":3,"stamp":"🍽️"},
+    {"question":"Please ( ) here.","options":["come","comes","coming","to come"],"answer":0,"stamp":"📍"},
+    {"question":"( ) is that? --- It's a camera.","options":["What","Who","Where","How"],"answer":0,"stamp":"📷"}
+];
 
-    // --- 2. スタンプデータ (ID, 絵文字, 日本語訳) ---
-    const stampData = [
-        { id: 1, icon: "🍎", word: "Apple", jp: "りんご" },
-        { id: 2, icon: "🚌", word: "Bus", jp: "バス" },
-        { id: 3, icon: "⚽", word: "Soccer", jp: "サッカー" },
-        { id: 4, icon: "🏠", word: "House", jp: "いえ" },
-        { id: 5, icon: "🏫", word: "School", jp: "がっこう" },
-        { id: 6, icon: "🎁", word: "Present", jp: "プレゼント" },
-        { id: 7, icon: "🤝", word: "Friend", jp: "ともだち" },
-        { id: 8, icon: "😊", word: "Smile", jp: "えがお" },
-        { id: 9, icon: "🐶", word: "Dog", jp: "いぬ" },
-        { id: 10, icon: "🐱", word: "Cat", jp: "ねこ" },
-        { id: 11, icon: "👑", word: "King", jp: "おうさま" },
-        { id: 12, icon: "⭐", word: "Star", jp: "ほし" }
-    ];
+let quizSet=[];
+let current=0;
+let score=0;
+let wrongAnswers=[];
+let selectedIndex=null;
+let audioCtx=null;
+let newlyEarnedStamps=[];
 
-    // --- 3. 変数管理 ---
-    let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let userStamps = JSON.parse(localStorage.getItem('eiken5_stamps')) || []; // 保存データ読み込み
+window.onload=()=>{
+    displaySavedStamps();
+};
 
-    // --- 4. ゲームロジック ---
+function displaySavedStamps(){
+    const saved = JSON.parse(localStorage.getItem('eiken5_stamps')||'[]');
+    const container = document.getElementById('saved-stamps');
+    container.innerHTML = "";
+    saved.forEach(s => {
+        const div = document.createElement('div');
+        div.className='stamp';
+        div.textContent=s;
+        container.appendChild(div);
+    });
+}
 
-    function startQuiz() {
-        // 問題をシャッフルして10問選ぶ
-        const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
-        currentQuestions = shuffled.slice(0, 10);
-        
-        currentIndex = 0;
-        score = 0;
-        
-        showSection('quiz-section');
-        showQuestion();
+function startQuiz(){
+    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+    quizSet = [...QUESTIONS].sort(()=>0.5-Math.random()).slice(0,10);
+    current=0; score=0; wrongAnswers=[]; newlyEarnedStamps=[];
+    document.getElementById('view-start').classList.add('hidden');
+    document.getElementById('view-quiz').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion(){
+    selectedIndex=null;
+    let q = quizSet[current];
+    document.getElementById('q-header').textContent=`だい ${current+1} もん / 10`;
+    document.getElementById('q-body').textContent=q.question;
+    let html="";
+    q.options.forEach((opt,i)=>{
+        html+=`<button class="btn" id="opt${i}" onclick="handleSelect(${i})">${opt}</button>`;
+    });
+    document.getElementById('options').innerHTML = html;
+    let readText = q.question.includes("( )") ? q.question.replace("( )","blank") : q.question;
+    speak(readText);
+}
+
+function handleSelect(i){
+    if(selectedIndex === i){
+        submitAnswer(i);
+    } else {
+        selectedIndex = i;
+        document.querySelectorAll('.btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById(`opt${i}`).classList.add('selected');
+        speak(quizSet[current].options[i]);
     }
+}
 
-    function showQuestion() {
-        const qData = currentQuestions[currentIndex];
-        document.getElementById('progress-text').innerText = `Question ${currentIndex + 1}/10`;
-        document.getElementById('question-text').innerHTML = qData.q;
-        
-        const optionsDiv = document.getElementById('options-container');
-        optionsDiv.innerHTML = "";
-
-        // 選択肢もシャッフルするためのインデックス配列
-        let optIndices = [0, 1, 2, 3];
-        optIndices.sort(() => 0.5 - Math.random());
-
-        optIndices.forEach(idx => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = qData.opts[idx];
-            btn.onclick = () => checkAnswer(btn, idx, qData.ans);
-            optionsDiv.appendChild(btn);
-        });
+function submitAnswer(i){
+    let q = quizSet[current];
+    let correct = (i === q.answer);
+    playSound(correct);
+    showMark(correct);
+    if(correct){
+        score++;
+        checkAndSaveStamp(q.stamp);
+    } else {
+        wrongAnswers.push(q);
     }
+    current++;
+    setTimeout(()=>{
+        if(current < quizSet.length) showQuestion();
+        else showScore();
+    }, 800);
+}
 
-    function checkAnswer(btn, selectedIdx, correctIdx) {
-        // 連打防止
-        const allBtns = document.querySelectorAll('.option-btn');
-        allBtns.forEach(b => b.disabled = true);
-
-        if (selectedIdx === correctIdx) {
-            btn.classList.add('correct');
-            score++;
-            // 音を鳴らすならここで new Audio('correct.mp3').play();
-        } else {
-            btn.classList.add('wrong');
-            // 正解を表示
-            allBtns.forEach((b, i) => {
-                // ボタンのテキストから元のインデックスを探すのは面倒なので、
-                // 正解のボタンを探して色を変える
-                // ここでは簡易的に、全ボタン作り直すのではなく色だけ変える
-            });
-        }
-
-        setTimeout(() => {
-            currentIndex++;
-            if (currentIndex < 10) {
-                showQuestion();
-            } else {
-                endGame();
-            }
-        }, 1000);
+function checkAndSaveStamp(s){
+    let saved = JSON.parse(localStorage.getItem('eiken5_stamps')||'[]');
+    if(!saved.includes(s)){
+        saved.push(s);
+        localStorage.setItem('eiken5_stamps', JSON.stringify(saved));
+        newlyEarnedStamps.push(s);
     }
+}
 
-    function endGame() {
-        showSection('result-section');
-        document.getElementById('score-text').innerText = `${score} / 10`;
-        const rewardArea = document.getElementById('reward-area');
-        
-        if (score >= 7) {
-            document.getElementById('result-title').innerText = "PASS! CONGRATULATIONS!";
-            document.getElementById('result-title').style.color = "var(--success)";
-            
-            // 新しいスタンプを抽選（持っていないものを優先）
-            const uncollected = stampData.filter(s => !userStamps.includes(s.id));
-            let newStampId;
-            
-            if (uncollected.length > 0) {
-                const random = uncollected[Math.floor(Math.random() * uncollected.length)];
-                newStampId = random.id;
-            } else {
-                // 全部持っていたらランダム
-                newStampId = stampData[Math.floor(Math.random() * stampData.length)].id;
-            }
+function showMark(correct){
+    const m = document.getElementById('mark');
+    m.textContent = correct ? "◯" : "×";
+    m.style.color = correct ? "var(--success)" : "var(--wrong)";
+    m.className = "mark-ani";
+    setTimeout(() => m.className = "", 800);
+}
 
-            // 保存
-            if (!userStamps.includes(newStampId)) {
-                userStamps.push(newStampId);
-                localStorage.setItem('eiken5_stamps', JSON.stringify(userStamps));
-                
-                const stampObj = stampData.find(s => s.id === newStampId);
-                rewardArea.innerHTML = `
-                    <p>New Stamp Get!</p>
-                    <div class="stamp-reveal">${stampObj.icon}</div>
-                    <p>${stampObj.word}</p>
-                `;
-            } else {
-                rewardArea.innerHTML = `<p>Great job! Try again for more stamps!</p>`;
-            }
-
-        } else {
-            document.getElementById('result-title').innerText = "TRY AGAIN...";
-            document.getElementById('result-title').style.color = "var(--danger)";
-            rewardArea.innerHTML = `<p>You need 7 points to pass.</p>`;
-        }
-    }
-
-    // --- 5. スタンプ帳ロジック ---
-
-    function showStampBook() {
-        showSection('stamp-book-section');
-        const grid = document.getElementById('stamp-grid');
-        grid.innerHTML = "";
-
-        stampData.forEach(s => {
-            const slot = document.createElement('div');
-            slot.className = 'stamp-slot';
-            
-            if (userStamps.includes(s.id)) {
-                slot.innerText = s.icon;
-                slot.onclick = () => showModal(s);
-            } else {
-                slot.classList.add('locked');
-                slot.innerText = "❓";
-            }
-            grid.appendChild(slot);
-        });
-    }
-
-    function showModal(stamp) {
-        document.getElementById('modal').style.display = 'flex';
-        document.getElementById('modal-icon').innerText = stamp.icon;
-        document.getElementById('modal-jp').innerText = `${stamp.word} : ${stamp.jp}`;
-    }
-
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
-    }
-
-    // --- ユーティリティ ---
-    function showSection(id) {
-        document.getElementById('start-section').style.display = 'none';
-        document.getElementById('quiz-section').style.display = 'none';
-        document.getElementById('result-section').style.display = 'none';
-        document.getElementById('stamp-book-section').style.display = 'none';
-        
-        document.getElementById(id).style.display = 'block';
-    }
+function showScore(){
+    document.getElementById('view-quiz').classList.add('hidden');
+    document.getElementById('view-result').classList.remove('hidden');
+    document.getElementById('score-text').textContent = `${score} / 10 点`;
     
-    function toTitle() {
-        showSection('start-section');
+    // 新しいスタンプ表示
+    const newStampDiv = document.getElementById('new-stamps');
+    newStampDiv.innerHTML = "";
+    if(newlyEarnedStamps.length > 0){
+        document.getElementById('new-stamps-container').classList.remove('hidden');
+        newlyEarnedStamps.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'stamp'; div.textContent = s;
+            newStampDiv.appendChild(div);
+        });
+    } else {
+        document.getElementById('new-stamps-container').classList.add('hidden');
     }
 
+    // 復習リスト
+    const rList = document.getElementById('review-list');
+    rList.innerHTML = "";
+    if(wrongAnswers.length > 0){
+        document.getElementById('review-area').classList.remove('hidden');
+        wrongAnswers.forEach(q => {
+            const div = document.createElement('div');
+            div.className = 'review-item';
+            div.innerHTML = `<span class="review-q">${q.question}</span>
+                             <span class="review-a">正解：${q.options[q.answer]}</span>`;
+            div.onclick = () => {
+                let text = q.question.includes("( )") ? q.question.replace("( )", q.options[q.answer]) : q.question;
+                speak(text);
+            };
+            rList.appendChild(div);
+        });
+    } else {
+        document.getElementById('review-area').classList.add('hidden');
+    }
+}
+
+function speak(text){
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US"; u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+}
+
+function playSound(correct){
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(correct ? 880 : 220, audioCtx.currentTime);
+    if(correct) osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+}
 </script>
 </body>
 </html>
