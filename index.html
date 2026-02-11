@@ -31,7 +31,8 @@
         .special-stamps { display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-weight: bold; color: #ffa000; }
         .special-item { font-size: 18px; }
         .review-area { text-align: left; background: #fafafa; padding: 15px; border-radius: 20px; margin-top: 20px; border: 2px solid #eee; }
-        .review-item { padding: 10px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .review-item { padding: 12px; border-bottom: 1px solid #ddd; position: relative; }
+        .hint-text { background: #e3f2fd; padding: 10px; border-radius: 10px; font-size: 13px; margin-top: 8px; color: #1565c0; display: none; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -43,7 +44,7 @@
     </div>
 
     <div id="view-start">
-        <h1>🌟 英検5級 練習ルーム 🚀</h1>
+        <h1>🌟 英検5級 完璧マスター 🚀</h1>
         <p style="font-size:14px; margin-bottom:10px; color:#90a4ae;">コースをえらんで練習（5問）</p>
         <div class="mode-grid">
             <button class="mode-btn" onclick="startQuiz('A')">😊 会話・挨拶</button>
@@ -76,7 +77,7 @@
         <h2 id="score-text" style="font-size:42px; color:var(--primary); margin: 10px 0;"></h2>
         <div id="reward-message" style="margin: 20px 0; font-weight: bold;"></div>
         <div id="review-area" class="review-area hidden">
-            <p style="margin:0 0 10px 0; font-weight:bold; font-size:13px;">📝 ふくしゅうリスト</p>
+            <p style="margin:0 0 10px 0; font-weight:bold; font-size:13px;">📝 ふくしゅうリスト（💡を押してね）</p>
             <div id="review-list"></div>
         </div>
         <button onclick="location.reload()" class="btn test-btn">メニューへもどる</button>
@@ -86,68 +87,67 @@
 <div id="mark"></div>
 
 <script>
-// データ省略せず全文掲載
 const QUESTIONS = [
-    {cat:"A", q:"How are you?", opts:["I'm fine.","Thank you.","Goodbye.","Yes, please."], ans:0, s:"😊"},
-    {cat:"A", q:"Nice to meet you.", opts:["Nice to meet you, too.","You're welcome.","No, thank you.","I'm sorry."], ans:0, s:"🤝"},
-    {cat:"A", q:"Good ( ), Mom. --- Good night, Ken.", opts:["morning","evening","night","afternoon"], ans:2, s:"🌙"},
-    {cat:"A", q:"Excuse ( ).", opts:["me","I","my","mine"], ans:0, s:"💬"},
-    {cat:"A", q:"Happy ( ) Year!", opts:["New","Now","Good","Nice"], ans:0, s:"🎍"},
-    {cat:"A", q:"See you ( ).", opts:["again","ready","well","nice"], ans:0, s:"👋"},
-    {cat:"A", q:"( ) me a favor?", opts:["Do","Make","Give","Take"], ans:0, s:"🙏"},
-    {cat:"A", q:"( ) up, Ken. It's seven o'clock.", opts:["Get","Go","Take","Sit"], ans:0, s:"🌞"},
-    {cat:"A", q:"( ) your name?", opts:["What","What's","How's","Who's"], ans:1, s:"📝"},
-    {cat:"A", q:"I'm ( ). --- Here is some water.", opts:["hungry","thirsty","sleepy","happy"], ans:1, s:"💧"},
-    {cat:"A", q:"This is for ( ).", opts:["you","your","yours","you're"], ans:0, s:"🎁"},
-    {cat:"A", q:"Open ( ) book, please.", opts:["you","your","me","mine"], ans:1, s:"📖"},
-    {cat:"A", q:"Please ( ) here.", opts:["come","comes","coming","to come"], ans:0, s:"📍"},
-    {cat:"A", q:"Wait ( ) me, please.", opts:["at","to","for","in"], ans:2, s:"⌛"},
-    {cat:"A", q:"( ) you busy?", opts:["Do","Are","Can","Is"], ans:1, s:"🏃"},
-    {cat:"B", q:"( ) time is it?", opts:["How","What","When","Where"], ans:1, s:"⏰"},
-    {cat:"B", q:"( ) old are you?", opts:["How","What","Who","Where"], ans:0, s:"🎂"},
-    {cat:"B", q:"( ) is that boy? --- He is my brother.", opts:["What","Where","Who","How"], ans:2, s:"👦"},
-    {cat:"B", q:"( ) is the station?", opts:["Who","Where","When","What"], ans:1, s:"🚉"},
-    {cat:"B", q:"( ) do you play soccer? --- In the park.", opts:["When","Who","Where","What"], ans:2, s:"🌳"},
-    {cat:"B", q:"How ( ) is this? --- It's 100 yen.", opts:["much","many","old","long"], ans:0, s:"💰"},
-    {cat:"B", q:"( ) is your birthday?", opts:["What","When","Where","Who"], ans:1, s:"📅"},
-    {cat:"B", q:"What ( ) you doing?", opts:["am","is","are","do"], ans:2, s:"❓"},
-    {cat:"B", q:"( ) many books do you have?", opts:["How","What","When","Where"], ans:0, s:"📚"},
-    {cat:"B", q:"( ) you like coffee?", opts:["Do","Are","Is","Can"], ans:0, s:"☕"},
-    {cat:"B", q:"( ) is that? --- It's a camera.", opts:["What","Who","Where","How"], ans:0, s:"📷"},
-    {cat:"B", q:"Whose bag is ( )?", opts:["this","these","those","my"], ans:0, s:"💼"},
-    {cat:"B", q:"How ( ) do you go there? --- Twice a week.", opts:["often","much","many","old"], ans:0, s:"🔄"},
-    {cat:"B", q:"Are you ( )? --- Yes, I am.", opts:["cook","cooking","cooks","to cook"], ans:1, s:"🍳"},
-    {cat:"B", q:"( ) you help me?", opts:["Do","Can","Are","Is"], ans:1, s:"🆘"},
-    {cat:"C", q:"I ( ) to school every day.", opts:["goes","go","going","gone"], ans:1, s:"🏫"},
-    {cat:"C", q:"I ( ) breakfast at seven.", opts:["have","has","having","to have"], ans:0, s:"🍞"},
-    {cat:"C", q:"( ) your hands.", opts:["Wash","Watch","Walk","Wait"], ans:0, s:"🧼"},
-    {cat:"C", q:"My father ( ) tennis on Sundays.", opts:["play","plays","playing","played"], ans:1, s:"🎾"},
-    {cat:"C", q:"Look ( ) the picture.", opts:["to","at","in","for"], ans:1, s:"🖼️"},
-    {cat:"C", q:"Let's ( ) tennis.", opts:["play","playing","plays","to play"], ans:0, s:"🎾"},
-    {cat:"C", q:"We ( ) lunch at school.", opts:["eat","eats","eating","to eat"], ans:0, s:"🍱"},
-    {cat:"C", q:"They are ( ) in the pool.", opts:["swim","swimming","swims","swam"], ans:1, s:"🏊"},
-    {cat:"C", q:"I ( ) the piano every day.", opts:["play","plays","playing","played"], ans:0, s:"🎹"},
-    {cat:"C", q:"She ( ) English every day.", opts:["study","studies","studying","to study"], ans:1, s:"✍️"},
-    {cat:"C", q:"I play soccer ( ) Saturday.", opts:["in","on","at","to"], ans:1, s:"⚽"},
-    {cat:"C", q:"( ) go to the library.", opts:["Let's","Do","Are","Is"], ans:0, s:"🏛️"},
-    {cat:"C", q:"I am ( ) music now.", opts:["listen","listening","listens","listened"], ans:1, s:"🎧"},
-    {cat:"C", q:"I am ( ) from Canada.", opts:["no","not","don't","isn't"], ans:1, s:"🇨🇦"},
-    {cat:"C", q:"( ) close the door.", opts:["Not","No","Don't","Doesn't"], ans:2, s:"🚪"},
-    {cat:"D", q:"Can you ( ) the piano?", opts:["plays","playing","play","played"], ans:2, s:"🎹"},
-    {cat:"D", q:"This is ( ) notebook.", opts:["my","me","I","mine"], ans:0, s:"📓"},
-    {cat:"D", q:"I like ( ) very much.", opts:["apple","an apple","apples","the apple"], ans:2, s:"🍎"},
-    {cat:"D", q:"( ) name is Ken.", opts:["He","His","Him","He's"], ans:1, s:"🆔"},
-    {cat:"D", q:"Look at ( ).", opts:["we","our","us","ours"], ans:2, s:"👀"},
-    {cat:"D", q:"I ( ) like baseball.", opts:["am not","don't","doesn't","not"], ans:1, s:"⚾"},
-    {cat:"D", q:"I ( ) a student.", opts:["is","am","are","be"], ans:1, s:"🎒"},
-    {cat:"D", q:"I ( ) a new car.", opts:["want","wants","wanting","to want"], ans:0, s:"🚗"},
-    {cat:"D", q:"It is ( ) today.", opts:["sun","sunny","suns","sunned"], ans:1, s:"☀️"},
-    {cat:"D", q:"This is an ( ).", opts:["pen","book","orange","desk"], ans:2, s:"🍊"},
-    {cat:"D", q:"He ( ) a tall boy.", opts:["am","is","are","do"], ans:1, s:"🦒"},
-    {cat:"D", q:"That ( ) is mine.", opts:["pen","pens","pen's","a pen"], ans:0, s:"✒️"},
-    {cat:"D", q:"I like ( ) music.", opts:["listen","listening to","listen to","listens"], ans:1, s:"🎵"},
-    {cat:"D", q:"Do you like ( )?", opts:["apple","apples","an apple","the apple"], ans:1, s:"🍏"},
-    {cat:"D", q:"I have ( ) breakfast.", opts:["a","an","the","(no word)"], ans:3, s:"🍽️"}
+    {cat:"A", q:"How are you?", opts:["I'm fine.","Thank you.","Goodbye.","Yes, please."], ans:0, s:"😊", hint:"調子をきかれたら 'I'm fine.'（元気です）と答えよう。"},
+    {cat:"A", q:"Nice to meet you.", opts:["Nice to meet you, too.","You're welcome.","No, thank you.","I'm sorry."], ans:0, s:"🤝", hint:"'Nice to meet you' には最後に 'too'（〜も）をつけて返そう。"},
+    {cat:"A", q:"Good ( ), Mom. --- Good night, Ken.", opts:["morning","evening","night","afternoon"], ans:2, s:"🌙", hint:"返事が 'Good night'（おやすみ）なので、セットで覚えよう。"},
+    {cat:"A", q:"Excuse ( ).", opts:["me","I","my","mine"], ans:0, s:"💬", hint:"'Excuse me' で「すみません」という決まったフレーズだよ。"},
+    {cat:"A", q:"Happy ( ) Year!", opts:["New","Now","Good","Nice"], ans:0, s:"🎍", hint:"'Happy New Year' で「あけましておめでとう」だね。"},
+    {cat:"A", q:"See you ( ).", opts:["again","ready","well","nice"], ans:0, s:"👋", hint:"'See you again'（またね）や 'See you later' がよく使われるよ。"},
+    {cat:"A", q:"( ) me a favor?", opts:["Do","Make","Give","Take"], ans:0, s:"🙏", hint:"'Do me a favor' は「お願いをきいて」という重要フレーズ！"},
+    {cat:"A", q:"( ) up, Ken. It's seven o'clock.", opts:["Get","Go","Take","Sit"], ans:0, s:"🌞", hint:"'Get up' で「起きる」という意味だよ。"},
+    {cat:"A", q:"( ) your name?", opts:["What","What's","How's","Who's"], ans:1, s:"📝", hint:"'What is your name?' の短縮形 'What's' を選ぼう。"},
+    {cat:"A", q:"I'm ( ). --- Here is some water.", opts:["hungry","thirsty","sleepy","happy"], ans:1, s:"💧", hint:"お水がほしいのは 'thirsty'（のどがかわいた）ときだね。"},
+    {cat:"A", q:"This is for ( ).", opts:["you","your","yours","you're"], ans:0, s:"🎁", hint:"'for' の後ろは 'you'（あなた）という形がくるよ。"},
+    {cat:"A", q:"Open ( ) book, please.", opts:["you","your","me","mine"], ans:1, s:"📖", hint:"'your book'（あなたの本）という「だれの」を表す形にしよう。"},
+    {cat:"A", q:"Please ( ) here.", opts:["come","comes","coming","to come"], ans:0, s:"📍", hint:"'Please' のあとは動詞の「もとの形（原形）」がくるよ。"},
+    {cat:"A", q:"Wait ( ) me, please.", opts:["at","to","for","in"], ans:2, s:"⌛", hint:"'wait for 〜' で「〜を待つ」という意味になるよ。"},
+    {cat:"A", q:"( ) you busy?", opts:["Do","Are","Can","Is"], ans:1, s:"🏃", hint:"'You are busy.' を質問にすると 'Are you 〜?' になるよ。"},
+    {cat:"B", q:"( ) time is it?", opts:["How","What","When","Where"], ans:1, s:"⏰", hint:"時間をきくときは 'What time' を使おう。"},
+    {cat:"B", q:"( ) old are you?", opts:["How","What","Who","Where"], ans:0, s:"🎂", hint:"年齢をきくときは 'How old'（どのくらい古い＝何歳）だね。"},
+    {cat:"B", q:"( ) is that boy? --- He is my brother.", opts:["What","Where","Who","How"], ans:2, s:"👦", hint:"「だれ？」ときくときは 'Who' を使おう。"},
+    {cat:"B", q:"( ) is the station?", opts:["Who","Where","When","What"], ans:1, s:"🚉", hint:"「どこ？」ときくときは 'Where' を使おう。"},
+    {cat:"B", q:"( ) do you play soccer? --- In the park.", opts:["When","Who","Where","What"], ans:2, s:"🌳", hint:"返事が「公園で」という場所なので 'Where' が正解。"},
+    {cat:"B", q:"How ( ) is this? --- It's 100 yen.", opts:["much","many","old","long"], ans:0, s:"💰", hint:"値段をきくときは 'How much' を使おう。"},
+    {cat:"B", q:"( ) is your birthday?", opts:["What","When","Where","Who"], ans:1, s:"📅", hint:"「いつ？」ときくときは 'When' を使おう。"},
+    {cat:"B", q:"What ( ) you doing?", opts:["am","is","are","do"], ans:2, s:"❓", hint:"'are you 〜ing?' で「いま〜していますか？」という進行形だよ。"},
+    {cat:"B", q:"( ) many books do you have?", opts:["How","What","When","Where"], ans:0, s:"📚", hint:"数をきくときは 'How many' ＋ 複数形（sつき）だよ。"},
+    {cat:"B", q:"( ) you like coffee?", opts:["Do","Are","Is","Can"], ans:0, s:"☕", hint:"一般動詞（likeなど）の質問は 'Do you 〜?' ではじめるよ。"},
+    {cat:"B", q:"( ) is that? --- It's a camera.", opts:["What","Who","Where","How"], ans:0, s:"📷", hint:"「なに？」ときくときは 'What' だね。"},
+    {cat:"B", q:"Whose bag is ( )?", opts:["this","these","those","my"], ans:0, s:"💼", hint:"'is' なので単数の 'this' が正解。'these' は複数だよ。"},
+    {cat:"B", q:"How ( ) do you go there? --- Twice a week.", opts:["often","much","many","old"], ans:0, s:"🔄", hint:"頻度（どのくらいよく）をきくときは 'How often'。"},
+    {cat:"B", q:"Are you ( )? --- Yes, I am.", opts:["cook","cooking","cooks","to cook"], ans:1, s:"🍳", hint:"'Are you 〜ing?' で「いま〜しているところ？」になるよ。"},
+    {cat:"B", q:"( ) you help me?", opts:["Do","Can","Are","Is"], ans:1, s:"🆘", hint:"「〜できる？」や「お願いできる？」は 'Can you 〜?' だね。"},
+    {cat:"C", q:"I ( ) to school every day.", opts:["goes","go","going","gone"], ans:1, s:"🏫", hint:"主語が 'I' のとき、動詞には何もつけないよ。"},
+    {cat:"C", q:"I ( ) breakfast at seven.", opts:["have","has","having","to have"], ans:0, s:"🍞", hint:"食べる（持っている）は 'have'。'has' は主語が He/She のとき。"},
+    {cat:"C", q:"( ) your hands.", opts:["Wash","Watch","Walk","Wait"], ans:0, s:"🧼", hint:"命令文（〜しなさい）は動詞の形をそのまま使うよ。"},
+    {cat:"C", q:"My father ( ) tennis on Sundays.", opts:["play","plays","playing","played"], ans:1, s:"🎾", hint:"主語が自分とあなた以外の１人（父）のときは、動詞に 's' をつけるよ。"},
+    {cat:"C", q:"Look ( ) the picture.", opts:["to","at","in","for"], ans:1, s:"🖼️", hint:"「〜を見る」は 'look at' と覚えよう。"},
+    {cat:"C", q:"Let's ( ) tennis.", opts:["play","playing","plays","to play"], ans:0, s:"🎾", hint:"'Let's' のあとの動詞はそのままの形（原形）だよ。"},
+    {cat:"C", q:"We ( ) lunch at school.", opts:["eat","eats","eating","to eat"], ans:0, s:"🍱", hint:"主語が 'We'（わたしたち）のときは動詞に 's' はつけないよ。"},
+    {cat:"C", q:"They are ( ) in the pool.", opts:["swim","swimming","swims","swam"], ans:1, s:"🏊", hint:"'are' があるので進行形の '〜ing' にしよう。mが2つ重なるよ。"},
+    {cat:"C", q:"I ( ) the piano every day.", opts:["play","plays","playing","played"], ans:0, s:"🎹", hint:"毎日の習慣は現在形 'play' を使うよ。"},
+    {cat:"C", q:"She ( ) English every day.", opts:["study","studies","studying","to study"], ans:1, s:"✍️", hint:"主語が 'She' なので study が studies に変化するよ。"},
+    {cat:"C", q:"I play soccer ( ) Saturday.", opts:["in","on","at","to"], ans:1, s:"⚽", hint:"曜日（土曜日など）の前には 'on' を使うよ。"},
+    {cat:"C", q:"( ) go to the library.", opts:["Let's","Do","Are","Is"], ans:0, s:"🏛️", hint:"「〜しましょう」とさそうときは 'Let's' だね。"},
+    {cat:"C", q:"I am ( ) music now.", opts:["listen","listening","listens","listened"], ans:1, s:"🎧", hint:"'now'（いま）と言っているので、進行形の 'ing' を選ぼう。"},
+    {cat:"C", q:"I am ( ) from Canada.", opts:["no","not","don't","isn't"], ans:1, s:"🇨🇦", hint:"be動詞（am/is/are）の否定は後ろに 'not' をおくだけ。"},
+    {cat:"C", q:"( ) close the door.", opts:["Not","No","Don't","Doesn't"], ans:2, s:"🚪", hint:"「〜しないで」というときは 'Don't' ＋ 動詞だよ。"},
+    {cat:"D", q:"Can you ( ) the piano?", opts:["plays","playing","play","played"], ans:2, s:"🎹", hint:"'Can' のあとの動詞は、絶対にそのままの形（原形）だよ。"},
+    {cat:"D", q:"This is ( ) notebook.", opts:["my","me","I","mine"], ans:0, s:"📓", hint:"「わたしの〜」は 'my' を使うよ。"},
+    {cat:"D", q:"I like ( ) very much.", opts:["apple","an apple","apples","the apple"], ans:2, s:"🍎", hint:"一般的にいうときは複数形（sつき）が自然だよ。"},
+    {cat:"D", q:"( ) name is Ken.", opts:["He","His","Him","He's"], ans:1, s:"🆔", hint:"「彼の〜」は 'His' を使うよ。"},
+    {cat:"D", q:"Look at ( ).", opts:["we","our","us","ours"], ans:2, s:"👀", hint:"動詞のあとに「わたしたちを」とくる場合は 'us' を使うよ。"},
+    {cat:"D", q:"I ( ) like baseball.", opts:["am not","don't","doesn't","not"], ans:1, s:"⚾", hint:"一般動詞（like）の否定は 'don't' を使うよ。"},
+    {cat:"D", q:"I ( ) a student.", opts:["is","am","are","be"], ans:1, s:"🎒", hint:"主語が 'I' のときの be動詞は 'am' だけ！"},
+    {cat:"D", q:"I ( ) a new car.", opts:["want","wants","wanting","to want"], ans:0, s:"🚗", hint:"「〜がほしい」は 'want'。主語が I なので s はいらないよ。"},
+    {cat:"D", q:"It is ( ) today.", opts:["sun","sunny","suns","sunned"], ans:1, s:"☀️", hint:"天気を表すときは形容詞 'sunny' を使うよ。"},
+    {cat:"D", q:"This is an ( ).", opts:["pen","book","orange","desk"], ans:2, s:"🍊", hint:"前が 'an' なので、あいうえお（母音）ではじまる言葉。"},
+    {cat:"D", q:"He ( ) a tall boy.", opts:["am","is","are","do"], ans:1, s:"🦒", hint:"主語が 'He' のときの be動詞は 'is' だね。"},
+    {cat:"D", q:"That ( ) is mine.", opts:["pen","pens","pen's","a pen"], ans:0, s:"✒️", hint:"'That'（あれ）は１つなので、sがつかない 'pen' が正解。"},
+    {cat:"D", q:"I like ( ) music.", opts:["listen","listening to","listen to","listens"], ans:1, s:"🎵", hint:"'like' のあとに動作を置くときは '〜ing'（〜すること）だよ。"},
+    {cat:"D", q:"Do you like ( )?", opts:["apple","apples","an apple","the apple"], ans:1, s:"🍏", hint:"「〜が好きですか？」と種類全体をいうなら複数形（sつき）。"},
+    {cat:"D", q:"I have ( ) breakfast.", opts:["a","an","the","(no word)"], ans:3, s:"🍽️", hint:"食事（breakfastなど）には a や the はつけないよ。"}
 ];
 
 let quizSet=[], current=0, score=0, wrongAnswers=[], currentMode='', selectedIndex=null;
@@ -258,7 +258,7 @@ function showMark(correct) {
 }
 
 function showScore() {
-    document.getElementById('review-area').classList.add('hidden'); // 表示リセット
+    document.getElementById('review-area').classList.add('hidden');
     document.getElementById('view-quiz').classList.add('hidden');
     document.getElementById('view-result').classList.remove('hidden');
     document.getElementById('score-text').textContent = `${score} / ${quizSet.length}`;
@@ -282,34 +282,35 @@ function showScore() {
     rList.innerHTML = "";
     if(wrongAnswers.length > 0) {
         document.getElementById('review-area').classList.remove('hidden');
-        wrongAnswers.forEach(q => {
+        wrongAnswers.forEach((q, index) => {
             const div = document.createElement('div');
             div.className = 'review-item';
-            div.innerHTML = `<span style="color:var(--wrong);font-weight:bold;">${q.q}</span><br><span style="font-size:13px;">せいかい：${q.opts[q.ans]}</span>`;
-            div.onclick = () => speak(q.q.replace("( )", q.opts[q.ans]));
+            div.innerHTML = `
+                <div onclick="speak('${q.q.replace("( )", q.opts[q.ans]).replace(/'/g, "\\'")}')">
+                    <span style="color:var(--wrong);font-weight:bold;">${q.q}</span><br>
+                    <span style="font-size:13px;">せいかい：<b>${q.opts[q.ans]}</b></span>
+                </div>
+                <button onclick="toggleHint(${index})" style="margin-top:8px; padding:6px 12px; border-radius:12px; border:1px solid #ddd; background:#fff; cursor:pointer; font-size:12px;">💡 かいせつをみる</button>
+                <div id="hint-${index}" class="hint-text">${q.hint}</div>
+            `;
             rList.appendChild(div);
         });
     }
 }
 
+function toggleHint(idx) {
+    const h = document.getElementById(`hint-${idx}`);
+    h.style.display = (h.style.display === 'block') ? 'none' : 'block';
+}
+
 function speak(text) {
     if(!soundOn) return;
     window.speechSynthesis.cancel();
-
-    let naturalText = text.includes("( )") 
-        ? text.replace("( )", "      ")
-        : text;
-
-    // 余計なスペースをまとめつつ、一文字の "I" への対策
+    let naturalText = text.includes("( )") ? text.replace("( )", "      ") : text;
     naturalText = naturalText.replace(/\s+/g," ");
-    if(naturalText.trim() === "I") {
-        naturalText = "I.";
-    }
-
+    if(naturalText.trim() === "I") naturalText = "I.";
     const u = new SpeechSynthesisUtterance(naturalText);
-    u.lang = "en-US";
-    u.rate = 0.9;
-    u.pitch = 1;
+    u.lang = "en-US"; u.rate = 0.9; u.pitch = 1;
     speechSynthesis.speak(u);
 }
 
