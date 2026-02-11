@@ -7,11 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #ff8fb1; /* パステルピンク */
-            --success: #b4e197; /* パステルグリーン */
-            --wrong: #ffabab; /* パステルレッド */
-            --bg: #fff5f7; /* 薄いピンクの背景 */
-            --accent: #ffd384; /* パステルオレンジ */
+            --primary: #4fc3f7; 
+            --success: #81c784; 
+            --wrong: #ff8a65; 
+            --bg: #f0f4f8; 
+            --accent: #ffd54f; 
+            --text: #455a64;
         }
         body { 
             font-family: 'Kosugi Maru', sans-serif; 
@@ -19,98 +20,94 @@
             text-align: center; 
             margin: 0; 
             padding: 10px; 
-            color: #5d5d5d;
+            color: var(--text);
         }
         #app { 
             max-width: 550px; 
             margin: 20px auto; 
             background: white; 
             padding: 25px; 
-            border-radius: 40px; /* 角をさらに丸く */
-            box-shadow: 0 15px 35px rgba(255, 143, 177, 0.2); 
+            border-radius: 30px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
             min-height: 480px; 
             position: relative;
-            border: 6px solid #ffe1e9; /* 枠線を追加 */
+            border: 4px solid #cfd8dc;
         }
-        h1 { color: #ff74a4; font-size: 26px; margin-bottom: 5px; }
+        h1 { color: var(--primary); font-size: 26px; margin-bottom: 5px; }
         
-        /* ボタンのデザインをかわいく */
         .btn { 
             display: block; width: 100%; margin: 15px 0; padding: 18px; 
-            font-size: 19px; border-radius: 25px; 
-            border: 3px solid #ffe1e9; background: white; 
+            font-size: 19px; border-radius: 20px; 
+            border: 2px solid #eceff1; background: white; 
             cursor: pointer; touch-action: manipulation; user-select: none; 
-            transition: all 0.2s; color: #7a5a5a;
-            box-shadow: 0 4px 0 #ffe1e9; /* ぷっくり感 */
+            transition: all 0.2s; color: var(--text);
+            box-shadow: 0 4px 0 #cfd8dc;
         }
-        .btn:hover { background: #fffafb; border-color: var(--primary); }
+        .btn:hover { background: #fdfdfd; border-color: var(--primary); }
         .btn.selected { 
-            background: #fff176; border-color: #fbc02d; 
+            background: var(--accent); border-color: #fbc02d; 
             transform: translateY(2px); box-shadow: 0 2px 0 #fbc02d;
         }
         .btn:active { transform: translateY(4px); box-shadow: none; }
 
-        .small-btn { padding: 10px 18px; font-size: 14px; width: auto; display: inline-block; margin: 5px; border-radius: 20px; }
+        .small-btn { padding: 10px 18px; font-size: 14px; width: auto; display: inline-block; margin: 5px; border-radius: 15px; }
         .hidden { display: none; }
 
-        /* まる、ばつのマーク */
         #mark { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 220px; opacity: 0; pointer-events: none; z-index: 100; }
         .mark-ani { animation: pop 0.8s ease-out; }
         @keyframes pop { 0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);} 30%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-50%) scale(1.3);} }
 
-        .q-text { font-size: 24px; font-weight: bold; margin: 25px 0; color: #ff74a4; line-height: 1.5; }
+        .q-text { font-size: 24px; font-weight: bold; margin: 25px 0; color: #37474f; line-height: 1.5; }
         
-        /* スタンプのデザイン */
         .stamp-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
         .stamp { 
-            background: #fff9e6; border: 2px dashed #ffd384; border-radius: 50%; 
-            width: 65px; height: 65px; display: flex; align-items: center; 
+            background: #fff9e6; border: 2px dashed var(--accent); border-radius: 15px;
+            width: 60px; height: 60px; display: flex; align-items: center; 
             justify-content: center; font-size: 28px; 
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.05));
         }
 
-        .review-area { text-align: left; background: #fdfcf0; padding: 20px; border-radius: 25px; margin-top: 25px; border: 2px solid #f2e9d2; }
-        .review-item { padding: 12px; border-bottom: 1px solid #f2e9d2; cursor: pointer; }
-        .review-q { color: #e57373; font-weight: bold; display: block; font-size: 1.1em; }
-        .review-a { color: #81c784; font-size: 0.95em; display: block; margin-top: 6px; }
+        .review-area { text-align: left; background: #fafafa; padding: 20px; border-radius: 20px; margin-top: 25px; border: 2px solid #eee; }
+        .review-item { padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .review-q { color: var(--wrong); font-weight: bold; display: block; font-size: 1.1em; }
+        .review-a { color: var(--success); font-size: 0.95em; display: block; margin-top: 6px; }
     </style>
 </head>
 <body>
 
 <div id="app">
     <div style="text-align:right;">
-        <button onclick="toggleSound()" class="small-btn btn" id="soundBtn" style="background:#fff; color:#ff8fb1;">🔊 音ON</button>
+        <button onclick="toggleSound()" class="small-btn btn" id="soundBtn" style="background:#fff; color:var(--primary);">🔊 音ON</button>
     </div>
 
     <div id="view-start">
-        <h1>🍓 英検5級 60問テスト 🍰</h1>
-        <p style="font-size:15px; color:#a18d8d;">ランダムに10問出題するよ！<br>選んだあと、もう一回押すと決定！</p>
-        <button onclick="startQuiz()" class="btn" style="background:var(--primary); color:white; border:none; font-weight:bold; font-size:24px; box-shadow: 0 6px 0 #ff74a4;">スタート！</button>
+        <h1>🌟 英検5級 60問テスト 🚀</h1>
+        <p style="font-size:15px; color:#78909c;">10問ランダムに出題！<br>選んだあと、もう一回押すと決定だよ</p>
+        <button onclick="startQuiz()" class="btn" style="background:var(--success); color:white; border:none; font-weight:bold; font-size:24px; box-shadow: 0 6px 0 #689f38;">スタート！</button>
         <div style="margin-top:30px;">
-            <p style="font-size:14px; font-weight:bold; color:#ff74a4;">🎀 あつめたスタンプ帳 🎀</p>
+            <p style="font-size:14px; font-weight:bold; color:var(--text);">🏆 あつめたスタンプ 🏆</p>
             <div id="saved-stamps" class="stamp-grid"></div>
-            <button onclick="resetStamps()" class="small-btn btn" style="background:#f0f0f0; color:#999; border:none; box-shadow: 0 3px 0 #ddd;">リセット</button>
+            <button onclick="resetStamps()" class="small-btn btn" style="background:#cfd8dc; color:#fff; border:none; box-shadow: 0 3px 0 #b0bec5;">リセット</button>
         </div>
     </div>
 
     <div id="view-quiz" class="hidden">
-        <div id="q-header" style="font-size:15px; color:#b5a2a2; font-weight:bold;"></div>
+        <div id="q-header" style="font-size:15px; color:#90a4ae; font-weight:bold;"></div>
         <div id="q-body" class="q-text"></div>
         <div id="options"></div>
     </div>
 
     <div id="view-result" class="hidden">
         <h1>✨ 結果発表 ✨</h1>
-        <h2 id="score-text" style="font-size:42px; color:#ff74a4; margin: 15px 0;"></h2>
+        <h2 id="score-text" style="font-size:42px; color:var(--primary); margin: 15px 0;"></h2>
         <div id="new-stamps-container">
-            <p style="font-size:15px; font-weight:bold; color:#ff74a4;">🎁 新しいスタンプ！</p>
+            <p style="font-size:15px; font-weight:bold; color:var(--text);">🎉 ゲットしたスタンプ</p>
             <div id="new-stamps" class="stamp-grid"></div>
         </div>
         <div id="review-area" class="review-area hidden">
-            <p style="margin:0 0 10px 0; font-weight:bold; color:#8d7d4f;">📝 ふくしゅうリスト</p>
+            <p style="margin:0 0 10px 0; font-weight:bold; color:#546e7a;">📝 復習リスト</p>
             <div id="review-list"></div>
         </div>
-        <button onclick="location.reload()" class="btn" style="background:var(--primary); color:white; border:none; box-shadow: 0 6px 0 #ff74a4;">もう一度あそぶ</button>
+        <button onclick="location.reload()" class="btn" style="background:var(--primary); color:white; border:none; box-shadow: 0 6px 0 #0288d1;">もう一度挑戦</button>
     </div>
 </div>
 
@@ -202,7 +199,7 @@ function displaySavedStamps() {
 }
 
 function resetStamps() {
-    if(confirm("スタンプをぜんぶ消しちゃう？")) {
+    if(confirm("あつめたスタンプを消しますか？")) {
         localStorage.removeItem("eiken5_stamps");
         displaySavedStamps();
     }
@@ -217,16 +214,38 @@ function startQuiz() {
     showQuestion();
 }
 
+/* 改良版：選択肢をランダムにシャッフルして表示 */
 function showQuestion() {
     selectedIndex = null;
+    let originalQ = quizSet[current];
+
+    // 選択肢をシャッフル
+    let options = originalQ.options.map((opt, index) => ({
+        text: opt,
+        isCorrect: index === originalQ.answer
+    }));
+    options.sort(() => 0.5 - Math.random());
+
+    // 正解番号を更新
+    let newAnswerIndex = options.findIndex(o => o.isCorrect);
+
+    // 画面用の問題データを作る（もとのデータを壊さないように代入）
+    quizSet[current] = {
+        ...originalQ,
+        options: options.map(o => o.text),
+        answer: newAnswerIndex
+    };
+
     let q = quizSet[current];
     document.getElementById('q-header').textContent = `第 ${current + 1} 問 / 10`;
     document.getElementById('q-body').textContent = q.question;
+
     let html = "";
     q.options.forEach((opt, i) => {
         html += `<button class="btn" id="opt${i}" onclick="handleSelect(${i})">${opt}</button>`;
     });
     document.getElementById('options').innerHTML = html;
+
     speak(q.question);
 }
 
@@ -304,32 +323,26 @@ function showScore() {
     }
 }
 
-/* ご指定の1秒待機読み上げコードを統合 */
 function speak(text) {
     if(!soundOn) return;
-
     window.speechSynthesis.cancel();
 
     if(text.includes("( )")){
         const parts = text.split("( )");
-
         const u1 = new SpeechSynthesisUtterance(parts[0]);
-        u1.lang = "en-US";
-        u1.rate = 0.85;
-        speechSynthesis.speak(u1);
+        u1.lang = "en-US"; u1.rate = 0.85;
+        const u2 = new SpeechSynthesisUtterance(parts[1]);
+        u2.lang = "en-US"; u2.rate = 0.85;
 
-        setTimeout(() => {
-            if (speechSynthesis.speaking || parts[1]) {
-                const u2 = new SpeechSynthesisUtterance(parts[1]);
-                u2.lang = "en-US";
-                u2.rate = 0.85;
-                speechSynthesis.speak(u2);
-            }
-        }, 1000); // 1秒待つ
+        speechSynthesis.speak(u1);
+        u1.onend = () => {
+            setTimeout(() => {
+                if (soundOn) speechSynthesis.speak(u2);
+            }, 1000);
+        };
     } else {
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US";
-        u.rate = 0.85;
+        u.lang = "en-US"; u.rate = 0.85;
         speechSynthesis.speak(u);
     }
 }
