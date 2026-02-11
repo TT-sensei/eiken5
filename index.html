@@ -1,68 +1,68 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英検5級 60問チャレンジ完全版</title>
-<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
-<style>
-:root{ --primary:#1976d2; --success:#4caf50; --wrong:#f44336; --bg:#e3f2fd; }
-body{ font-family:'Kosugi Maru',sans-serif; background:var(--bg); text-align:center; margin:0; padding:10px; }
-#app{ max-width:550px; margin:20px auto; background:white; padding:25px; border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); min-height:450px; position: relative; }
-h1{ color:var(--primary); font-size:24px; margin-bottom:10px; }
-.btn{ display:block; width:100%; margin:12px 0; padding:16px; font-size:18px; border-radius:15px; border:3px solid #eee; background:white; cursor:pointer; touch-action:manipulation; user-select:none; transition:all 0.2s; }
-.btn:hover{ background:#fafafa; border-color:#ddd; }
-.btn.selected{ background:#fff176; border-color:#fbc02d; transform: scale(1.02); }
-.btn:active{ transform:scale(0.97); }
-.hidden{ display:none; }
-#mark{ position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); font-size:200px; opacity:0; pointer-events:none; z-index:100; }
-.mark-ani{ animation:pop 0.8s ease-out; }
-@keyframes pop{ 0%{opacity:0;transform:translate(-50%,-50%) scale(0.3);} 30%{opacity:1;} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.3);} }
-.q-text{ font-size:22px; font-weight:bold; margin:20px 0; color:#0d47a1; line-height:1.4; }
-.stamp-grid{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:15px 0; }
-.stamp{ background:#ffecb3; border:2px dashed #ffa000; border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; font-size:24px; animation: stampIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-@keyframes stampIn { from { transform: scale(0); rotate: -20deg; } to { transform: scale(1); rotate: 0deg; } }
-.review-area{ text-align:left; background:#f1f8e9; padding:15px; border-radius:15px; margin-top:20px; border: 1px solid #c8e6c9; }
-.review-item{ padding:10px; border-bottom: 1px solid #c8e6c9; cursor:pointer; }
-.review-item:last-child{ border:none; }
-.review-q{ color:var(--wrong); font-weight:bold; display: block; }
-.review-a{ color:var(--success); font-size:0.9em; display: block; margin-top: 4px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英検5級 60問チャレンジ完全版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1976d2; --success: #4caf50; --wrong: #f44336; --bg: #e3f2fd; }
+        body { font-family: 'Kosugi Maru', sans-serif; background: var(--bg); text-align: center; margin: 0; padding: 10px; }
+        #app { max-width: 550px; margin: 20px auto; background: white; padding: 25px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); min-height: 450px; position: relative; }
+        h1 { color: var(--primary); font-size: 24px; margin-bottom: 5px; }
+        .btn { display: block; width: 100%; margin: 12px 0; padding: 16px; font-size: 18px; border-radius: 15px; border: 3px solid #eee; background: white; cursor: pointer; touch-action: manipulation; user-select: none; transition: all 0.2s; }
+        .btn.selected { background: #fff176; border-color: #fbc02d; transform: scale(1.02); }
+        .btn:active { transform: scale(0.97); }
+        .small-btn { padding: 8px 14px; font-size: 13px; width: auto; display: inline-block; margin: 5px; }
+        .hidden { display: none; }
+        #mark { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 200px; opacity: 0; pointer-events: none; z-index: 100; }
+        .mark-ani { animation: pop 0.8s ease-out; }
+        @keyframes pop { 0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);} 30%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-50%) scale(1.3);} }
+        .q-text { font-size: 22px; font-weight: bold; margin: 20px 0; color: #0d47a1; line-height: 1.4; }
+        .stamp-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; }
+        .stamp { background: #ffecb3; border: 2px dashed #ffa000; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .review-area { text-align: left; background: #f1f8e9; padding: 15px; border-radius: 15px; margin-top: 20px; border: 1px solid #c8e6c9; }
+        .review-item { padding: 10px; border-bottom: 1px solid #c8e6c9; cursor: pointer; }
+        .review-q { color: var(--wrong); font-weight: bold; display: block; }
+        .review-a { color: var(--success); font-size: 0.9em; display: block; margin-top: 4px; }
+    </style>
 </head>
 <body>
 
 <div id="app">
+    <div style="text-align:right;">
+        <button onclick="toggleSound()" class="small-btn btn" id="soundBtn">🔊 音ON</button>
+    </div>
+
     <div id="view-start">
         <h1>英検5級 60問テスト</h1>
-        <p style="font-size:14px; color:#555;">ランダムに10問出題！<br>選んでから「もう一度タップ」で決定</p>
-        <button onclick="startQuiz()" class="btn" style="background:var(--success);color:white;border:none;font-weight:bold;font-size:22px;box-shadow:0 4px #2e7d32;">スタート！</button>
-        <div style="margin-top:30px; border-top: 1px solid #eee; padding-top: 20px;">
-            <p style="font-size:13px; font-weight:bold; color:var(--primary);">あつめたスタンプ帳</p>
+        <p style="font-size:14px;">ランダムに10問出題！<br>2回タップで決定</p>
+        <button onclick="startQuiz()" class="btn" style="background:var(--success); color:white; border:none; font-weight:bold; font-size:22px;">スタート！</button>
+        <div style="margin-top:25px;">
+            <p style="font-size:13px; font-weight:bold;">あつめたスタンプ帳</p>
             <div id="saved-stamps" class="stamp-grid"></div>
+            <button onclick="resetStamps()" class="small-btn btn" style="background:#eee; margin-top:10px;">スタンプリセット</button>
         </div>
     </div>
 
     <div id="view-quiz" class="hidden">
-        <div id="q-header" style="font-size:14px;color:#666; font-weight:bold;"></div>
+        <div id="q-header" style="font-size:14px; color:#666;"></div>
         <div id="q-body" class="q-text"></div>
         <div id="options"></div>
     </div>
 
     <div id="view-result" class="hidden">
         <h1>結果発表</h1>
-        <h2 id="score-text" style="font-size:40px; margin: 10px 0;"></h2>
-
+        <h2 id="score-text" style="font-size:32px;"></h2>
         <div id="new-stamps-container">
-            <p style="font-weight:bold; font-size:14px;">新しくゲットしたスタンプ！</p>
+            <p style="font-size:14px;">新しくゲットしたスタンプ！</p>
             <div id="new-stamps" class="stamp-grid"></div>
         </div>
-
         <div id="review-area" class="review-area hidden">
-            <p style="margin:0 0 10px 0;font-weight:bold; color:#2e7d32;">📝 ふくしゅうリスト (タップで音が出るよ)</p>
+            <p style="margin:0; font-weight:bold; color:#2e7d32;">📝 ふくしゅう（タップで音読）</p>
             <div id="review-list"></div>
         </div>
-
-        <button onclick="location.reload()" class="btn" style="background:var(--primary);color:white;border:none;margin-top:20px;">もう一度チャレンジ</button>
+        <button onclick="location.reload()" class="btn" style="background:var(--primary); color:white; border:none; margin-top:20px;">もう一度</button>
     </div>
 </div>
 
@@ -132,55 +132,58 @@ const QUESTIONS = [
     {"question":"( ) is that? --- It's a camera.","options":["What","Who","Where","How"],"answer":0,"stamp":"📷"}
 ];
 
-let quizSet=[];
-let current=0;
-let score=0;
-let wrongAnswers=[];
-let selectedIndex=null;
-let audioCtx=null;
-let newlyEarnedStamps=[];
+let quizSet=[], current=0, score=0, wrongAnswers=[], newlyEarnedStamps=[], selectedIndex=null;
+let soundOn=true, audioCtx=null;
 
-window.onload=()=>{
-    displaySavedStamps();
-};
+window.onload = displaySavedStamps;
 
-function displaySavedStamps(){
-    const saved = JSON.parse(localStorage.getItem('eiken5_stamps')||'[]');
+function toggleSound() {
+    soundOn = !soundOn;
+    document.getElementById("soundBtn").textContent = soundOn ? "🔊 音ON" : "🔇 音OFF";
+    if(!soundOn) window.speechSynthesis.cancel();
+}
+
+function displaySavedStamps() {
+    const saved = JSON.parse(localStorage.getItem('eiken5_stamps') || '[]');
     const container = document.getElementById('saved-stamps');
     container.innerHTML = "";
     saved.forEach(s => {
         const div = document.createElement('div');
-        div.className='stamp';
-        div.textContent=s;
-        container.appendChild(div);
+        div.className = 'stamp'; div.textContent = s; container.appendChild(div);
     });
 }
 
-function startQuiz(){
-    audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-    quizSet = [...QUESTIONS].sort(()=>0.5-Math.random()).slice(0,10);
+function resetStamps() {
+    if(confirm("あつめたスタンプをぜんぶ消しますか？")) {
+        localStorage.removeItem("eiken5_stamps");
+        displaySavedStamps();
+    }
+}
+
+function startQuiz() {
+    if(!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+    quizSet = [...QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 10);
     current=0; score=0; wrongAnswers=[]; newlyEarnedStamps=[];
     document.getElementById('view-start').classList.add('hidden');
     document.getElementById('view-quiz').classList.remove('hidden');
     showQuestion();
 }
 
-function showQuestion(){
-    selectedIndex=null;
+function showQuestion() {
+    selectedIndex = null;
     let q = quizSet[current];
-    document.getElementById('q-header').textContent=`だい ${current+1} もん / 10`;
-    document.getElementById('q-body').textContent=q.question;
-    let html="";
-    q.options.forEach((opt,i)=>{
-        html+=`<button class="btn" id="opt${i}" onclick="handleSelect(${i})">${opt}</button>`;
+    document.getElementById('q-header').textContent = `だい ${current + 1} もん / 10`;
+    document.getElementById('q-body').textContent = q.question;
+    let html = "";
+    q.options.forEach((opt, i) => {
+        html += `<button class="btn" id="opt${i}" onclick="handleSelect(${i})">${opt}</button>`;
     });
     document.getElementById('options').innerHTML = html;
-    let readText = q.question.includes("( )") ? q.question.replace("( )","blank") : q.question;
-    speak(readText);
+    speak(q.question);
 }
 
-function handleSelect(i){
-    if(selectedIndex === i){
+function handleSelect(i) {
+    if (selectedIndex === i) {
         submitAnswer(i);
     } else {
         selectedIndex = i;
@@ -190,34 +193,34 @@ function handleSelect(i){
     }
 }
 
-function submitAnswer(i){
+function submitAnswer(i) {
     let q = quizSet[current];
     let correct = (i === q.answer);
     playSound(correct);
     showMark(correct);
-    if(correct){
+    if(correct) {
         score++;
-        checkAndSaveStamp(q.stamp);
+        saveStamp(q.stamp);
     } else {
         wrongAnswers.push(q);
     }
     current++;
-    setTimeout(()=>{
+    setTimeout(() => {
         if(current < quizSet.length) showQuestion();
         else showScore();
     }, 800);
 }
 
-function checkAndSaveStamp(s){
-    let saved = JSON.parse(localStorage.getItem('eiken5_stamps')||'[]');
-    if(!saved.includes(s)){
+function saveStamp(s) {
+    let saved = JSON.parse(localStorage.getItem('eiken5_stamps') || '[]');
+    if(!saved.includes(s)) {
         saved.push(s);
         localStorage.setItem('eiken5_stamps', JSON.stringify(saved));
         newlyEarnedStamps.push(s);
     }
 }
 
-function showMark(correct){
+function showMark(correct) {
     const m = document.getElementById('mark');
     m.textContent = correct ? "◯" : "×";
     m.style.color = correct ? "var(--success)" : "var(--wrong)";
@@ -225,54 +228,45 @@ function showMark(correct){
     setTimeout(() => m.className = "", 800);
 }
 
-function showScore(){
+function showScore() {
     document.getElementById('view-quiz').classList.add('hidden');
     document.getElementById('view-result').classList.remove('hidden');
     document.getElementById('score-text').textContent = `${score} / 10 点`;
     
-    // 新しいスタンプ表示
     const newStampDiv = document.getElementById('new-stamps');
     newStampDiv.innerHTML = "";
-    if(newlyEarnedStamps.length > 0){
-        document.getElementById('new-stamps-container').classList.remove('hidden');
+    if(newlyEarnedStamps.length > 0) {
         newlyEarnedStamps.forEach(s => {
             const div = document.createElement('div');
-            div.className = 'stamp'; div.textContent = s;
-            newStampDiv.appendChild(div);
+            div.className = 'stamp'; div.textContent = s; newStampDiv.appendChild(div);
         });
-    } else {
-        document.getElementById('new-stamps-container').classList.add('hidden');
     }
 
-    // 復習リスト
     const rList = document.getElementById('review-list');
     rList.innerHTML = "";
-    if(wrongAnswers.length > 0){
+    if(wrongAnswers.length > 0) {
         document.getElementById('review-area').classList.remove('hidden');
         wrongAnswers.forEach(q => {
             const div = document.createElement('div');
             div.className = 'review-item';
-            div.innerHTML = `<span class="review-q">${q.question}</span>
-                             <span class="review-a">正解：${q.options[q.answer]}</span>`;
-            div.onclick = () => {
-                let text = q.question.includes("( )") ? q.question.replace("( )", q.options[q.answer]) : q.question;
-                speak(text);
-            };
+            div.innerHTML = `<span class="review-q">${q.question}</span><span class="review-a">せいかい：${q.options[q.answer]}</span>`;
+            div.onclick = () => speak(q.question.replace("( )", q.options[q.answer]));
             rList.appendChild(div);
         });
-    } else {
-        document.getElementById('review-area').classList.add('hidden');
     }
 }
 
-function speak(text){
+function speak(text) {
+    if(!soundOn) return;
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+    let readText = text.replace("( )", "blank");
+    const u = new SpeechSynthesisUtterance(readText);
     u.lang = "en-US"; u.rate = 0.85;
     window.speechSynthesis.speak(u);
 }
 
-function playSound(correct){
+function playSound(correct) {
+    if(!soundOn || !audioCtx) return;
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.connect(gain); gain.connect(audioCtx.destination);
