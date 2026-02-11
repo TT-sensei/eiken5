@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英検5級 60問チャレンジ完全版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <title>英検5級 60問チャレンジ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #4fc3f7; /* 清潔感のある空色 */
-            --success: #81c784; /* 優しいグリーン */
-            --wrong: #ff8a65; /* 落ち着いたオレンジレッド */
+            --primary: #4fc3f7; 
+            --success: #81c784; 
+            --wrong: #ff8a65; 
             --bg: #f0f4f8; 
             --accent: #ffd54f; 
             --text: #455a64;
         }
         body { 
-            font-family: 'Kosugi Maru', sans-serif; 
+            font-family: 'Lexend', 'Kosugi Maru', sans-serif; /* 英語が見やすいLexendフォントを採用 */
             background: var(--bg); 
             text-align: center; 
             margin: 0; 
@@ -57,7 +57,7 @@
         .mark-ani { animation: pop 0.8s ease-out; }
         @keyframes pop { 0%{opacity:0; transform:translate(-50%,-50%) scale(0.3);} 30%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-50%) scale(1.3);} }
 
-        .q-text { font-size: 24px; font-weight: bold; margin: 25px 0; color: #37474f; line-height: 1.5; }
+        .q-text { font-size: 24px; font-weight: bold; margin: 25px 0; color: #37474f; line-height: 1.5; letter-spacing: 0.5px; }
         
         .stamp-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
         .stamp { 
@@ -320,26 +320,23 @@ function showScore() {
     }
 }
 
+/* 改善版：スペースによる自然なポーズの読み上げ */
 function speak(text) {
     if(!soundOn) return;
     window.speechSynthesis.cancel();
 
-    // 大文字Iを正しく読ませるための対策
-    let processedText = text.replace(/\bI\b/g, " I ");
+    let naturalText = text;
 
-    if(processedText.includes("( )")){
-        // 空白を入れて自然な間を作る
-        const naturalText = processedText.replace("( )", "      "); 
-        const u = new SpeechSynthesisUtterance(naturalText);
-        u.lang = "en-US";
-        u.rate = 0.85;
-        speechSynthesis.speak(u);
-    } else {
-        const u = new SpeechSynthesisUtterance(processedText);
-        u.lang = "en-US";
-        u.rate = 0.85;
-        speechSynthesis.speak(u);
+    if(naturalText.includes("( )")){
+        // ( ) をスペースに置き換えて、自然な「溜め」を作る
+        naturalText = naturalText.replace("( )", "      ");
     }
+
+    const u = new SpeechSynthesisUtterance(naturalText);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    u.pitch = 1;
+    speechSynthesis.speak(u);
 }
 
 function playSound(correct) {
