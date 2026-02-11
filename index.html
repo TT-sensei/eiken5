@@ -7,9 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --primary: #4fc3f7; 
-            --success: #81c784; 
-            --wrong: #ff8a65; 
+            --primary: #4fc3f7; /* 清潔感のある空色 */
+            --success: #81c784; /* 優しいグリーン */
+            --wrong: #ff8a65; /* 落ち着いたオレンジレッド */
             --bg: #f0f4f8; 
             --accent: #ffd54f; 
             --text: #455a64;
@@ -214,7 +214,6 @@ function startQuiz() {
     showQuestion();
 }
 
-/* 改良版：選択肢をランダムにシャッフルして表示 */
 function showQuestion() {
     selectedIndex = null;
     let originalQ = quizSet[current];
@@ -226,10 +225,8 @@ function showQuestion() {
     }));
     options.sort(() => 0.5 - Math.random());
 
-    // 正解番号を更新
     let newAnswerIndex = options.findIndex(o => o.isCorrect);
 
-    // 画面用の問題データを作る（もとのデータを壊さないように代入）
     quizSet[current] = {
         ...originalQ,
         options: options.map(o => o.text),
@@ -327,22 +324,20 @@ function speak(text) {
     if(!soundOn) return;
     window.speechSynthesis.cancel();
 
-    if(text.includes("( )")){
-        const parts = text.split("( )");
-        const u1 = new SpeechSynthesisUtterance(parts[0]);
-        u1.lang = "en-US"; u1.rate = 0.85;
-        const u2 = new SpeechSynthesisUtterance(parts[1]);
-        u2.lang = "en-US"; u2.rate = 0.85;
+    // 大文字Iを正しく読ませるための対策
+    let processedText = text.replace(/\bI\b/g, " I ");
 
-        speechSynthesis.speak(u1);
-        u1.onend = () => {
-            setTimeout(() => {
-                if (soundOn) speechSynthesis.speak(u2);
-            }, 1000);
-        };
+    if(processedText.includes("( )")){
+        // 空白を入れて自然な間を作る
+        const naturalText = processedText.replace("( )", "      "); 
+        const u = new SpeechSynthesisUtterance(naturalText);
+        u.lang = "en-US";
+        u.rate = 0.85;
+        speechSynthesis.speak(u);
     } else {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US"; u.rate = 0.85;
+        const u = new SpeechSynthesisUtterance(processedText);
+        u.lang = "en-US";
+        u.rate = 0.85;
         speechSynthesis.speak(u);
     }
 }
